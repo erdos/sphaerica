@@ -1,0 +1,104 @@
+<?xml version="1.0" ?>
+<construction>
+	<menu name="construction.add.point" icon="geometry/free_point.png">
+		<item name="construction.add.point" icon="geometry/free_point.png">
+			(show (select-point))
+		</item>
+		<item name="construction.add.midpoint" icon="geometry/point_midpoint.png">
+			(let(a (select-point)
+			     b (select-other-point a))
+			     (show (midpoint a b)))
+		</item>
+		<item name="construction.add.antipode" icon="geometry/point_antipode.png">
+			(show (antipode (select-point)))
+		</item>
+		<item name="construction.add.intersection" icon="geometry/point_intersection.png">
+			(let(a (select-curve)
+			     b (select-other-curve a)) 
+			    (list (show (intersect a b)) 
+			          (show (intersect b a))))
+		</item>
+		<!-- <item name="construction.add.projection" icon="geometry/point_projection.png">
+			var l = circle(), p = point();
+			intersection(segment(midpoint(l.getOrigo(), p), midpoint(antipode(l.getOrigo()), p)), l).show();
+		</item>-->
+	</menu>
+	<menu name="construction.add.circle" icon="geometry/circle_by_two_points.png">
+		<item name="construction.add.circle" icon="geometry/circle_by_two_points.png">
+			(show (apply circle (select-two-points)))
+		</item>
+		<item name="construction.add.circle.between-two-points" icon="geometry/circle_between_two_points.png">
+			(let(a (select-point)
+			     b (select-other-point a)
+			     m (midpoint a b))
+			    (show (circle m a)))
+		</item>
+		<item name="construction.add.circle.excircle" icon="geometry/circle_excircle.png">
+			(let(a   (select-point)
+			     b   (select-other-point a)
+			     c   (while-in! select-point (list a b))
+			     ab  (midpoint a b)
+			     ac  (midpoint a c)
+			     axb (intersect (line a) (line b))
+			     axc (intersect (line a) (line c))
+			     ab-perp (line (intersect (line ab) (line axb)))
+			     ac-perp (line (intersect (line ac) (line axc)))
+			     orig (intersect ab-perp ac-perp))
+			    (show (circle orig a)))
+		</item>
+	</menu>
+
+	<menu name="construction.add.line" icon="geometry/line_by_point.png">
+		<item name="construction.add.line" icon="geometry/line_by_point.png">
+			(show (line (select-point)))
+		</item>
+		<item name="construction.add.line.twopoints" icon="geometry/line_by_two_points.png">
+			(let(a (select-point)
+			     b (select-other-point a))
+			     (show (line (intersect (line a) (line b)))))
+		</item>
+		<item name="construction.add.line.betweenpoints" icon="geometry/line_between_points.png">
+			(let(a (select-point)
+			     b (select-other-point a)
+			     m (midpoint a b))
+			    (show (line (intersect (line m) (line (intersect (line a) (line b)))))))
+		</item>
+		<!-- <item name="construction.add.line.perpendicular" icon="geometry/line_perpendicular.png">
+			var p = point(), l = circle();
+			line(intersection(l, line(p))).show();
+		</item> -->
+		<item name="construction.add.segment" icon="geometry/line_segment.png">
+			(let(a (select-point)
+			     b (select-other-point a))
+			    (show (segment a b)))
+		</item>
+	</menu>
+	<menu name="construction.add.polygon" icon="geometry/triangle">
+		<item name="construction.add.polygon" icon="geometry/polygon">
+				(let(p0  (select-point)
+				     p1  (select-point)
+					 fun (lambda (y)
+					 			 (let (p  (select-point)
+					 			       ls (cons p (car y))
+					 			       newpoly (poly ls))  
+					 			      (do
+					 			      	(show newpoly)
+					 			    	(remove (second y))
+					 			    	(list ls newpoly)
+					 			    )))
+					 rep (repeat fun (list (list p1 p0))))
+					 (second rep))
+		</item>
+		<item name="construction.add.triangle" icon="geometry/triangle">
+			(let(a   (select-point)
+			     b   (select-other-point a)
+			     c   (while-in! select-point (list a b)))
+			     (show (poly (list a b c))))
+		</item>
+	</menu>
+	<!-- <menu name="polyhedra" icon="geometry/triangle">
+		<item name="octahedron" icon="geometry/polygon">
+			new octahedron().show();
+		</item>
+	</menu> -->
+</construction>
