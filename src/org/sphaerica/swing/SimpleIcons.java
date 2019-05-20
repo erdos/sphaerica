@@ -69,7 +69,7 @@ public enum SimpleIcons implements Icon {
             g.drawLine(x + w / 2, y + r, x + w / 2, y + h - r);
             g.drawLine(x + r, y + h / 2, x + w - r, y + h / 2);
         }
-    };;
+    };
 
     private static final int w = 22, h = 22, r = 5;
 
@@ -78,13 +78,9 @@ public enum SimpleIcons implements Icon {
         return h;
     }
 
-    ;
-
     @Override
     public int getIconWidth() {
         return w;
     }
-
-    ;
 
 }

@@ -106,7 +106,6 @@ class LispView extends FieldView {
                     close = j;
                     break;
                 }
-                ;
             }
         } else if (cursor > 0 && doc.getText(cursor - 1, 1).charAt(0) == ')') {
             close = cursor - 1;
@@ -118,7 +117,6 @@ class LispView extends FieldView {
                     open = j;
                     break;
                 }
-                ;
             }
         }
 

@@ -22,7 +22,7 @@ public class DocumentHandler {
     /**
      * Inner representation of the state of the currently opened document.
      */
-    public static interface DocumentState {
+    public interface DocumentState {
         /**
          * Concrete implementation should override this method to provide
          * default behavior for opening document files.
@@ -31,7 +31,7 @@ public class DocumentHandler {
          * @throws FileNotFoundException
          * @throws IOException
          */
-        public abstract void readFile(File f) throws FileNotFoundException,
+        void readFile(File f) throws FileNotFoundException,
                 IOException;
 
         /**
@@ -41,7 +41,7 @@ public class DocumentHandler {
          * @param file to save to.
          * @throws IOException
          */
-        public abstract void writeFile(File f) throws IOException;
+        void writeFile(File f) throws IOException;
 
         /**
          * Implementations should override this method to clear inner state of

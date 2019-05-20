@@ -98,10 +98,8 @@ public final class SphereDisplayPanel extends JPanel implements
         if (!obj.getAppearance().containsKey(
                 ObjectAppearanceFactory.KEY_VISIBILITY))
             return false;
-        if (obj.getAppearance().get(ObjectAppearanceFactory.KEY_VISIBILITY)
-                .equals(Boolean.FALSE))
-            return false;
-        return true;
+        return !obj.getAppearance().get(ObjectAppearanceFactory.KEY_VISIBILITY)
+                .equals(Boolean.FALSE);
     }
 
     /**

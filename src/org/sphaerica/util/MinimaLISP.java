@@ -46,10 +46,10 @@ public class MinimaLISP {
                 if (stack.empty())
                     return li;
                 stack.push(li);
-            } else if (isIdentifierChar((char) c)) {
+            } else if (isIdentifierChar(c)) {
                 StringBuilder sb = new StringBuilder();
-                while (isIdentifierChar((char) c) && c != (char) -1) {
-                    sb.append((char) c);
+                while (isIdentifierChar(c) && c != (char) -1) {
+                    sb.append(c);
                     c = (char) re.read();
                 }
                 stack.push(new Symbol(sb.toString()));
@@ -308,7 +308,7 @@ public class MinimaLISP {
 
                     @Override
                     public Object invoke(Object proxy, Method method,
-                                         Object[] args) throws Throwable {
+                                         Object[] args) {
                         return eval(li(
                                 body,
                                 li(new ContainerItem<String>(method.getName()),
@@ -378,7 +378,6 @@ public class MinimaLISP {
                     stack.add(null);
                     return;
                 }
-                ;
                 System.out.println(">>\t" + meth.getName() + "\t" + that);
                 for (Object o : arguments)
                     if (o instanceof Object[])

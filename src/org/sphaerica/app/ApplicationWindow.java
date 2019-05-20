@@ -250,7 +250,7 @@ public class ApplicationWindow extends JFrame implements ActionListener,
     }
 
     @Override
-    public void writeFile(File f) throws IOException {
+    public void writeFile(File f) {
         WorksheetExport.saveXML(worksheet, f);
     }
 

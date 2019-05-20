@@ -37,7 +37,7 @@ public class PrintComponent implements Printable {
     }
 
     @Override
-    public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException {
+    public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) {
         if (pageIndex > 0)
             return NO_SUCH_PAGE;
 
