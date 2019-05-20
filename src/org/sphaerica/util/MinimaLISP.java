@@ -1,7 +1,9 @@
 package org.sphaerica.util;
 
 import java.io.*;
-import java.lang.reflect.*;
+import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Array;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,18 +14,17 @@ import java.util.Stack;
  */
 public class MinimaLISP {
 
-    final Env rootBindings = new Env(null);
+    private final Env rootBindings = new Env(null);
 
     {
         rootBindings.sym.put("&engine", new ContainerItem<MinimaLISP>(this));
     }
 
-    boolean isIdentifierChar(char c) {
-        return Character.isLetter(c) || Character.isDigit(c)
-                || "!@#$%^&*_+-=<>?/~.[];".contains(c + "");
+    private boolean isIdentifierChar(char c) {
+        return Character.isLetter(c) || Character.isDigit(c) || "!@#$%^&*_+-=<>?/~.[];".contains(c + "");
     }
 
-    public Item parse(Reader re) throws IOException {
+    private Item parse(Reader re) throws IOException {
         final Stack<Item> stack = new Stack<Item>();
         char c = ' ';
         while (true) {
@@ -32,7 +33,7 @@ public class MinimaLISP {
             if (c == (char) -1)
                 break;
             else if (c == ';') {
-                while (c != -11 && c != '\n')
+                while (c != (char) -1 && c != '\n')
                     c = (char) re.read();
                 continue;
             } else if (c == '(') {
@@ -74,25 +75,16 @@ public class MinimaLISP {
         }
     }
 
-    enum IntegerMath implements Item {
-        PLUS, MINUS, MULT, DIV, MOD;
-
-        @Override
-        public Item apply(ItemVisitor v) {
-            return null;
-        }
-    }
-
-    private final ListItem li(Item c, ListItem li) {
+    private ListItem li(Item c, ListItem li) {
         return new ListItem(c, li);
     }
 
-    public static final void push(Stack<Item> stack, Item... items) {
+    private static void push(Stack<Item> stack, Item... items) {
         for (Item i : items)
             stack.push(i);
     }
 
-    public Object call(String s) {
+    private Object call(String s) {
         try {
             return eval(parse(new StringReader(s)), rootBindings);
         } catch (IOException e) {
@@ -102,7 +94,7 @@ public class MinimaLISP {
     }
 
     @SuppressWarnings("unchecked")
-    public Item eval(final Item it, Env root) {
+    private Item eval(final Item it, Env root) {
         if (it == null)
             return null;
 
@@ -302,23 +294,8 @@ public class MinimaLISP {
         return stack.pop();
     }
 
-    public Object factorProxy(final Item body, Class<?>... interfaces) {
-        return Proxy.newProxyInstance(this.getClass().getClassLoader(),
-                interfaces, new InvocationHandler() {
-
-                    @Override
-                    public Object invoke(Object proxy, Method method,
-                                         Object[] args) {
-                        return eval(li(
-                                body,
-                                li(new ContainerItem<String>(method.getName()),
-                                        null)), rootBindings);
-                    }
-                });
-    }
-
     @SuppressWarnings("unchecked")
-    public <T> T[] listToArray(ListItem lli, Class<T> cls) {
+    private <T> T[] listToArray(ListItem lli, Class<T> cls) {
         ArrayList<Object> ll = new ArrayList<Object>(3);
         for (ListItem li = lli; li != null; li = li.tail()) {
             Object o = ((ContainerItem<?>) li.head()).obj;
@@ -327,8 +304,8 @@ public class MinimaLISP {
         return ll.toArray((T[]) Array.newInstance(cls, 0));
     }
 
-    public void processOpCall2(Stack<Item> stack, Stack<Item> ops,
-                               Stack<Env> envs) {
+    private void processOpCall2(Stack<Item> stack, Stack<Item> ops,
+                                Stack<Env> envs) {
         final ListItem pop = (ListItem) stack.pop();
 
         if (((ContainerItem<?>) pop.head()).obj instanceof Env) {
@@ -404,7 +381,10 @@ public class MinimaLISP {
         rootBindings.sym.put(key, new ContainerItem<Object>(obj));
     }
 
-    String pprint(Item i) {
+    /**
+     * Pretty print an s-expression.
+     */
+    private String pprint(Item i) {
         if (i == null)
             return "null";
 
@@ -412,7 +392,7 @@ public class MinimaLISP {
 
         i.apply(new ItemVisitor() {
             Item visitSym(Symbol s) {
-                b.append(":" + s.obj);
+                b.append(":").append(s.obj);
                 return s;
             }
 
@@ -438,14 +418,14 @@ public class MinimaLISP {
             }
 
             Item visitCon(ContainerItem<?> c) {
-                b.append("=" + c.obj);
+                b.append("=").append(c.obj);
                 return c;
             }
         });
         return b.toString();
     }
 
-    final Map<String, Class<?>> cnames = new HashMap<String, Class<?>>();
+    private final Map<String, Class<?>> cnames = new HashMap<String, Class<?>>();
 
     {
         for (Class<?> c : new Class[]{byte.class, short.class, int.class,
@@ -453,7 +433,7 @@ public class MinimaLISP {
             cnames.put(c.getName(), c);
     }
 
-    public final Class<?> getClassForName(String name)
+    private Class<?> getClassForName(String name)
             throws ClassNotFoundException {
         Class<?> c = cnames.get(name);
         if (c == null)
@@ -470,7 +450,7 @@ public class MinimaLISP {
 
 class Env {
     final Map<String, Item> sym = new HashMap<String, Item>();
-    final Env outer;
+    private final Env outer;
 
     Env(Env out) {
         this.outer = out;
@@ -550,8 +530,8 @@ class Symbol extends ContainerItem<String> {
 }
 
 class ListItem implements Item {
-    protected final Item head;
-    protected final ListItem tail;
+    private final Item head;
+    private final ListItem tail;
 
     ListItem(Item h, ListItem t) {
         this.head = h;
